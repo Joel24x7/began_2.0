@@ -75,7 +75,7 @@ def train(model, epochs=100):
                     print('Epoch:', '%04d' % epoch, '%05d/%05d' % (batch_step, num_batches_per_epoch), 'convergence: {:.4}'.format(convergence))
                     
                     images = sess.run(sample)
-                    for img in len(images):
+                    for img in range(images):
                         tmpName = 'results/train_image{}.png'.format(img)
                         print(img.shape)
                         plt.imshow(img)
@@ -84,40 +84,22 @@ def train(model, epochs=100):
                 
             saver.save(sess, './models/began', global_step = epoch)
 
-# def test(model, num_samples, key='test'):
-
-
-#     x, z, lr, kt = model.initInputs()
-#     sample = model.get_sample(z)
-#     saver = tf.train.Saver()
-
-#     with tf.Session() as sess:
-#         scope.reuse_variables()
-
-#         if key != 'train':
-#             checkpoint_root = tf.train.latest_checkpoint('models',latest_filename=None)
-#             saver.restore(sess, checkpoint_root)
-
-#         for i in range(num_samples):
-#             noise = np.random.uniform(-1,1,size=[model.batch_size, model.noise_dim])
-#             img = sess.run(sample, feed_dict={z: noise})
-
-#             tmpName = 'results/{}_image{}.png'.format(key, i)
-#             plt.imshow(img)
-#             plt.savefig(tmpName)
-
 def test(model):
 
-    print('\nStarting training\n')
+    print('\nStarting testing\n')
 
     #Setup model
     _, z, _, _ = model.initInputs()
-    sample = model.get_sample(z)
-    test_noise = np.random.uniform(-1,1,size=[1, model.noise_dim])
+    sample = model.get_sample()
     saver = tf.train.Saver()
 
     with tf.Session() as sess:
-        img = sess.run(sample, feed_dict={z: test_noise})
-        tmpName = 'results/test_image{}.png'.format(i)
-        plt.imshow(img)
-        plt.savefig(tmpName)
+        checkpoint_root = tf.train.latest_checkpoint('models',latest_filename=None)
+        saver.restore(sess, checkpoint_root)
+
+        images = sess.run(sample)
+        for img in range(images):
+            tmpName = 'results/train_image{}.png'.format(img)
+            print(img.shape)
+            plt.imshow(img)
+            plt.savefig(tmpName)
