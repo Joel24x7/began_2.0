@@ -1,6 +1,6 @@
 import tensorflow as tf
 from model import Began
-from train import test, train
+from train import train
 
 if __name__ == '__main__':
 
