@@ -42,12 +42,18 @@ def train(model, epochs=100):
     tf.summary.scalar('kt', kt_var)
     merged = tf.summary.merge_all()
     saver = tf.train.Saver()
+    checkpoint_root = tf.train.latest_checkpoint('models',latest_filename=None)
+
 
     print('\nTraining Setup Complete\n')
 
     with tf.Session() as sess:
         train_writer = tf.summary.FileWriter('./logs', sess.graph)
-        sess.run(tf.global_variables_initializer())
+        
+        if checkpoint_root != None:
+            saver.restore(sess, checkpoint_root)
+        else:
+            sess.run(tf.global_variables_initializer())
         
         print('\nBeginning epoch iterations\n')
         for epoch in range(epochs):
