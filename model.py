@@ -25,35 +25,35 @@ class Began(object):
             if reuse:
                 scope.reuse_variables()
 
-        h0 = dense_layer(input_layer=input, units = self.hidden_size, scope='dec_h0')
-        h0 = tf.reshape(h0, [-1, 8, 8, self.num_filters])
+            h0 = dense_layer(input_layer=input, units = self.hidden_size, scope='dec_h0')
+            h0 = tf.reshape(h0, [-1, 8, 8, self.num_filters])
 
-        conv1 = conv_layer(input_layer=h0, layer_depth=self.num_filters, scope='dec1')
-        conv1 = tf.nn.elu(conv1)
-        conv2 = conv_layer(input_layer=conv1, layer_depth=self.num_filters, scope='dec2')
-        conv2 = tf.nn.elu(conv2)
+            conv1 = conv_layer(input_layer=h0, layer_depth=self.num_filters, scope='dec1')
+            conv1 = tf.nn.elu(conv1)
+            conv2 = conv_layer(input_layer=conv1, layer_depth=self.num_filters, scope='dec2')
+            conv2 = tf.nn.elu(conv2)
 
-        upsample1 = upsample(conv=conv2, size=[16,16])
-        conv3 = conv_layer(input_layer=upsample1, layer_depth=self.num_filters, scope='dec3')
-        conv3 = tf.nn.elu(conv3)
-        conv4 = conv_layer(input_layer=conv3, layer_depth=self.num_filters, scope='dec4')
-        conv4 = tf.nn.elu(conv4)
+            upsample1 = upsample(conv=conv2, size=[16,16])
+            conv3 = conv_layer(input_layer=upsample1, layer_depth=self.num_filters, scope='dec3')
+            conv3 = tf.nn.elu(conv3)
+            conv4 = conv_layer(input_layer=conv3, layer_depth=self.num_filters, scope='dec4')
+            conv4 = tf.nn.elu(conv4)
 
-        upsample2 = upsample(conv=conv4, size=[32,32])
-        conv5 = conv_layer(input_layer=upsample2, layer_depth=self.num_filters, scope='dec5')
-        conv5 = tf.nn.elu(conv5)
-        conv6 = conv_layer(input_layer=conv5, layer_depth=self.num_filters, scope='dec6')
-        conv6 = tf.nn.elu(conv6)
+            upsample2 = upsample(conv=conv4, size=[32,32])
+            conv5 = conv_layer(input_layer=upsample2, layer_depth=self.num_filters, scope='dec5')
+            conv5 = tf.nn.elu(conv5)
+            conv6 = conv_layer(input_layer=conv5, layer_depth=self.num_filters, scope='dec6')
+            conv6 = tf.nn.elu(conv6)
 
-        upsample3 = upsample(conv=conv6, size=[64,64])
-        conv7 = conv_layer(input_layer=upsample3, layer_depth=self.num_filters, scope='dec7')
-        conv7 = tf.nn.elu(conv7)
-        conv8 = conv_layer(input_layer=conv7, layer_depth=self.num_filters, scope='dec8')
-        conv8 = tf.nn.elu(conv8)
+            upsample3 = upsample(conv=conv6, size=[64,64])
+            conv7 = conv_layer(input_layer=upsample3, layer_depth=self.num_filters, scope='dec7')
+            conv7 = tf.nn.elu(conv7)
+            conv8 = conv_layer(input_layer=conv7, layer_depth=self.num_filters, scope='dec8')
+            conv8 = tf.nn.elu(conv8)
 
-        conv9 = conv_layer(input_layer=conv8, layer_depth=3, scope='decoder_image')
-        decoder_output = tf.nn.tanh(conv9)
-        return decoder_output
+            conv9 = conv_layer(input_layer=conv8, layer_depth=3, scope='decoder_image')
+            decoder_output = tf.nn.tanh(conv9)
+            return decoder_output
 
     def encoder(self, images, scope_name, reuse=False):
 
@@ -61,36 +61,36 @@ class Began(object):
             if reuse:
                 scope.reuse_variables()
 
-        organized_images = tf.reshape(images, [-1, self.image_size, self.image_size, 3])
-            
-        conv0 = conv_layer(input_layer=organized_images, layer_depth=self.num_filters, scope='enc0')
-        conv0 = tf.nn.elu(conv0)
-        conv1 = conv_layer(input_layer=conv0, layer_depth=self.num_filters, scope='enc1')
-        conv1 = tf.nn.elu(conv1)
-        conv2 = conv_layer(input_layer=conv1, layer_depth=self.num_filters, scope='enc2')
-        conv2 = tf.nn.elu(conv2)
+            organized_images = tf.reshape(images, [-1, self.image_size, self.image_size, 3])
+                
+            conv0 = conv_layer(input_layer=organized_images, layer_depth=self.num_filters, scope='enc0')
+            conv0 = tf.nn.elu(conv0)
+            conv1 = conv_layer(input_layer=conv0, layer_depth=self.num_filters, scope='enc1')
+            conv1 = tf.nn.elu(conv1)
+            conv2 = conv_layer(input_layer=conv1, layer_depth=self.num_filters, scope='enc2')
+            conv2 = tf.nn.elu(conv2)
 
-        sub1 = subsample(conv=conv2)
-        conv3 = conv_layer(input_layer=sub1, layer_depth=self.num_filters*2, scope='enc3')
-        conv3 = tf.nn.relu(conv3)
-        conv4 = conv_layer(input_layer=conv3, layer_depth=self.num_filters*2, scope='enc4')
-        conv4 = tf.nn.elu(conv4)
+            sub1 = subsample(conv=conv2)
+            conv3 = conv_layer(input_layer=sub1, layer_depth=self.num_filters*2, scope='enc3')
+            conv3 = tf.nn.relu(conv3)
+            conv4 = conv_layer(input_layer=conv3, layer_depth=self.num_filters*2, scope='enc4')
+            conv4 = tf.nn.elu(conv4)
 
-        sub2 = subsample(conv=conv4)
-        conv5 = conv_layer(input_layer=sub2, layer_depth=self.num_filters*3, scope='enc5')
-        tf.nn.elu(conv5)
-        conv6 = conv_layer(input_layer=conv5, layer_depth=self.num_filters*3, scope='enc6')
-        tf.nn.elu(conv6)
+            sub2 = subsample(conv=conv4)
+            conv5 = conv_layer(input_layer=sub2, layer_depth=self.num_filters*3, scope='enc5')
+            tf.nn.elu(conv5)
+            conv6 = conv_layer(input_layer=conv5, layer_depth=self.num_filters*3, scope='enc6')
+            tf.nn.elu(conv6)
 
-        sub3 = subsample(conv=conv6)
-        conv7 = conv_layer(input_layer=sub3, layer_depth=self.num_filters*4, scope='enc7')
-        tf.nn.elu(conv6)
-        conv8 = conv_layer(input_layer=conv7, layer_depth=self.num_filters*4, scope='enc8')
-        tf.nn.elu(conv8)
+            sub3 = subsample(conv=conv6)
+            conv7 = conv_layer(input_layer=sub3, layer_depth=self.num_filters*4, scope='enc7')
+            tf.nn.elu(conv6)
+            conv8 = conv_layer(input_layer=conv7, layer_depth=self.num_filters*4, scope='enc8')
+            tf.nn.elu(conv8)
 
-        dense9 = dense_layer(input_layer=conv8, units=self.hidden_size, scope='encoder_output')
-        encoder_output = tf.nn.tanh(dense9)
-        return encoder_output
+            dense9 = dense_layer(input_layer=conv8, units=self.hidden_size, scope='encoder_output')
+            encoder_output = tf.nn.tanh(dense9)
+            return encoder_output
 
     def generator(self, noise, reuse=False):
         with tf.variable_scope('generator') as scope:
@@ -127,6 +127,7 @@ class Began(object):
         gen_opt = adam.minimize(gen_loss, var_list=gen_vars)
         return dis_opt, gen_opt
 
-    def get_sample(self, noise, reuse=True):
-        image = self.generator(noise, reuse)
-        return image
+    def get_sample(self, num_samples=self.batch_size, reuse=True):
+        noise = np.random.uniform(-1,1,size=[num_filters, self.noise_dim])
+        images = self.generator(noise, reuse)
+        return images

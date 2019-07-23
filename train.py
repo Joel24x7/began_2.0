@@ -18,9 +18,7 @@ def train(model, epochs=100):
     dis_loss, gen_loss, d_x_loss, d_z_loss = model.loss(x, z, kt)
     dis_opt, gen_opt = model.optimizer(dis_loss, gen_loss, lr)
 
-    sample = model.get_sample(z)
-    test_noise = np.random.uniform(-1,1,size=[1, model.noise_dim])
-
+    sample = model.get_sample()
 
     #Setup data
     data = load_data()
@@ -76,10 +74,12 @@ def train(model, epochs=100):
 
                     print('Epoch:', '%04d' % epoch, '%05d/%05d' % (batch_step, num_batches_per_epoch), 'convergence: {:.4}'.format(convergence))
                     
-                    img = sess.run(sample, feed_dict={z: test_noise})
-                    tmpName = 'results/train_image{}.png'.format(tmp_step)
-                    plt.imshow(img)
-                    plt.savefig(tmpName)
+                    images = sess.run(sample)
+                    for img in len(images):
+                        tmpName = 'results/train_image{}.png'.format(img)
+                        print(img.shape)
+                        plt.imshow(img)
+                        plt.savefig(tmpName)
 
                 
             saver.save(sess, './models/began', global_step = epoch)
@@ -105,4 +105,19 @@ def train(model, epochs=100):
 #             tmpName = 'results/{}_image{}.png'.format(key, i)
 #             plt.imshow(img)
 #             plt.savefig(tmpName)
-            
+
+def test(model):
+
+    print('\nStarting training\n')
+
+    #Setup model
+    _, z, _, _ = model.initInputs()
+    sample = model.get_sample(z)
+    test_noise = np.random.uniform(-1,1,size=[1, model.noise_dim])
+    saver = tf.train.Saver()
+
+    with tf.Session() as sess:
+        img = sess.run(sample, feed_dict={z: test_noise})
+        tmpName = 'results/test_image{}.png'.format(i)
+        plt.imshow(img)
+        plt.savefig(tmpName)
