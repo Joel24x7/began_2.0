@@ -127,7 +127,9 @@ class Began(object):
         gen_opt = adam.minimize(gen_loss, var_list=gen_vars)
         return dis_opt, gen_opt
 
-    def get_sample(self, num_samples=self.batch_size, reuse=True):
+    def get_sample(self, num_samples=-1, reuse=True):
+        if num_samples == -1:
+            num_samples = self.batch_size
         noise = np.random.uniform(-1,1,size=[num_filters, self.noise_dim])
         images = self.generator(noise, reuse)
         return images
