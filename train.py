@@ -31,15 +31,16 @@ def train(model, epochs=100):
 
     #hyperparameters
     lrate = 0.0001
-    lambda_kt = 0.01
-    gamma = 0.3
+    lambda_kt = 0.001
+    gamma = 0.4
     kt_var = 0.0
     epoch_drop = 3
 
     #Tensorboard
     m_global = d_x_loss + tf.abs(gamma * d_x_loss - d_z_loss)
+    controller = kt + lambda_kt * (gamma * d_x_loss - d_z_loss)
     tf.summary.scalar('convergence', m_global)
-    tf.summary.scalar('kt', kt_var)
+    tf.summary.scalar('kt', controller)
     merged = tf.summary.merge_all()
     saver = tf.train.Saver()
     checkpoint_root = tf.train.latest_checkpoint('models',latest_filename=None)
@@ -75,7 +76,7 @@ def train(model, epochs=100):
 
                 summary = sess.run(merged, feed_dict)
                 train_writer.add_summary(summary, epoch * num_batches_per_epoch + batch_step)
-                print('Epoch:', '%04d' % epoch, '%05d/%05d' % (batch_step, num_batches_per_epoch), 'convergence: {:.4}'.format(convergence))
+                print('Epoch:', '%04d' % epoch, '%05d/%05d' % (batch_step, num_batches_per_epoch), 'convergence: {:.4} kt: {:.4}'.format(convergence, kt_var))
 
                 if batch_step % 2000 == 0:
                     images = sess.run(sample)
