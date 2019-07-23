@@ -18,6 +18,10 @@ def train(model, epochs=100):
     dis_loss, gen_loss, d_x_loss, d_z_loss = model.loss(x, z, kt)
     dis_opt, gen_opt = model.optimizer(dis_loss, gen_loss, lr)
 
+    sample = model.get_sample(z)
+    test_noise = np.random.uniform(-1,1,size=[1, model.noise_dim])
+
+
     #Setup data
     data = load_data()
     np.random.shuffle(data)
@@ -66,31 +70,39 @@ def train(model, epochs=100):
 
                 if batch_step % 300 == 0:
                     summary = sess.run(merged, feed_dict)
-                    train_writer.add_summary(summary, epoch * num_batches_per_epoch + batch_step)
+                    tmp_step = epoch * num_batches_per_epoch + batch_step
+                    train_writer.add_summary(summary, tmp_step)
                     convergence = real_loss + np.abs(gamma * real_loss - gen_loss)
 
                     print('Epoch:', '%04d' % epoch, '%05d/%05d' % (batch_step, num_batches_per_epoch), 'convergence: {:.4}'.format(convergence))
-                    test(model, 3, 'train')
+                    
+                    img = sess.run(sample, feed_dict={z: test_noise})
+                    tmpName = 'results/train_image{}.png'.format(tmp_step)
+                    plt.imshow(img)
+                    plt.savefig(tmpName)
+
                 
             saver.save(sess, './models/began', global_step = epoch)
 
-def test(model, num_samples, key='test'):
+# def test(model, num_samples, key='test'):
 
 
-    x, z, lr, kt = model.initInputs()
-    sample = model.get_sample(z)
-    saver = tf.train.Saver()
+#     x, z, lr, kt = model.initInputs()
+#     sample = model.get_sample(z)
+#     saver = tf.train.Saver()
 
-    with tf.Session() as sess:
-        if key != 'train':
-            checkpoint_root = tf.train.latest_checkpoint('models',latest_filename=None)
-            saver.restore(sess, checkpoint_root)
+#     with tf.Session() as sess:
+#         scope.reuse_variables()
 
-        for i in range(num_samples):
-            noise = np.random.uniform(-1,1,size=[model.batch_size, model.noise_dim])
-            img = sess.run(sample, feed_dict={z: noise})
+#         if key != 'train':
+#             checkpoint_root = tf.train.latest_checkpoint('models',latest_filename=None)
+#             saver.restore(sess, checkpoint_root)
 
-            tmpName = 'results/{}_image{}.png'.format(key, i)
-            plt.imshow(img)
-            plt.savefig(tmpName)
+#         for i in range(num_samples):
+#             noise = np.random.uniform(-1,1,size=[model.batch_size, model.noise_dim])
+#             img = sess.run(sample, feed_dict={z: noise})
+
+#             tmpName = 'results/{}_image{}.png'.format(key, i)
+#             plt.imshow(img)
+#             plt.savefig(tmpName)
             

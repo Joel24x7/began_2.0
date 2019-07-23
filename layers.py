@@ -3,7 +3,7 @@ import numpy as np
 import os
 
 #Encoder/Decoder Layers
-def conv_layer(input_layer, layer_depth, kernel_size=(3,3), stride=(1,1), stddev=0.2, in_dim=None, padding='SAME', scope='conv_layer'):
+def conv_layer(input_layer, layer_depth, kernel_size=(3,3), stride=(1,1), stddev=0.02, in_dim=None, padding='SAME', scope='conv_layer'):
     with tf.variable_scope(scope):
         filter_depth = in_dim or input_layer.shape[-1]
         weights = tf.get_variable('weights', 
@@ -19,7 +19,7 @@ def conv_layer(input_layer, layer_depth, kernel_size=(3,3), stride=(1,1), stddev
         conv = tf.nn.bias_add(conv, bias)
         return conv
 
-def dense_layer(input_layer, units, scope='dense', in_dim = None, stddev=0.2, bias_start=0.0):
+def dense_layer(input_layer, units, scope='dense', in_dim = None, stddev=0.02, bias_start=0):
     shape = input_layer.shape
     if len(shape) > 2:
         input_layer = tf.reshape(input_layer, [-1, int(np.prod(shape[1:]))])
