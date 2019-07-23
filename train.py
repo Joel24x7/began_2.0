@@ -48,7 +48,7 @@ def train(model, epochs=100):
     print('\nTraining Setup Complete\n')
 
     with tf.Session() as sess:
-        train_writer = tf.summary.FileWriter('./logs', sess.graph)
+        train_writer = tf.summary.FileWriter('./logs2', sess.graph)
 
         if checkpoint_root != None:
             saver.restore(sess, checkpoint_root)
@@ -81,12 +81,12 @@ def train(model, epochs=100):
                     images = sess.run(sample)
                     images = (images + 1.0) / 2.0
                     for i in range(images.shape[0]):
-                        tmpName = 'results/train_image{}.png'.format(i)
+                        tmpName = 'results2/train_image{}.png'.format(i)
                         img = images[i, :, :, :]
                         plt.imshow(img)
                         plt.savefig(tmpName)
 
-                    saver.save(sess, './models/began', global_step = epoch)
+                    saver.save(sess, './models2/began', global_step = epoch)
 
 def test(model):
 
@@ -96,7 +96,7 @@ def test(model):
     _, z, _, _ = model.initInputs()
     sample = model.get_sample(reuse=False)
     saver = tf.train.Saver()
-    checkpoint_root = tf.train.latest_checkpoint('models',latest_filename=None)
+    checkpoint_root = tf.train.latest_checkpoint('models2',latest_filename=None)
 
     with tf.Session() as sess:
 
@@ -109,7 +109,7 @@ def test(model):
         images = (images + 1.0) / 2.0
 
         for i in range(images.shape[0]):
-            tmpName = 'results/test_image{}.png'.format(i)
+            tmpName = 'results2/test_image{}.png'.format(i)
             img = images[i, :, :, :]
             plt.imshow(img)
             plt.savefig(tmpName)
