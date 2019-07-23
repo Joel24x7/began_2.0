@@ -49,7 +49,7 @@ def train(model, epochs=100):
 
     with tf.Session() as sess:
         train_writer = tf.summary.FileWriter('./logs', sess.graph)
-        
+
         if checkpoint_root != None:
             saver.restore(sess, checkpoint_root)
         else:
@@ -79,6 +79,7 @@ def train(model, epochs=100):
 
                 if batch_step % 2000 == 0:
                     images = sess.run(sample)
+                    images = (images + 1.0) / 2.0
                     for i in range(images.shape[0]):
                         tmpName = 'results/train_image{}.png'.format(i)
                         img = images[i, :, :, :]
@@ -105,6 +106,8 @@ def test(model):
             sess.run(tf.global_variables_initializer())
 
         images = sess.run(sample)
+        images = (images + 1.0) / 2.0
+
         for i in range(images.shape[0]):
             tmpName = 'results/test_image{}.png'.format(i)
             img = images[i, :, :, :]
