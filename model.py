@@ -131,5 +131,6 @@ class Began(object):
         if num_samples == -1:
             num_samples = self.batch_size
         noise = np.random.uniform(-1,1,size=[num_samples, self.noise_dim])
+        noise = np.float32(noise)
         images = self.generator(noise, reuse)
         return images
