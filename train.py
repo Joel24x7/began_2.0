@@ -31,8 +31,8 @@ def train(model, epochs=100):
 
     #hyperparameters
     lrate = 0.0001
-    lambda_kt = 0.001
-    gamma = 0.5
+    lambda_kt = 0.01
+    gamma = 0.3
     kt_var = 0.0
     epoch_drop = 3
 
