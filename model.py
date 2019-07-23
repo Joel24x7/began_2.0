@@ -130,6 +130,6 @@ class Began(object):
     def get_sample(self, num_samples=-1, reuse=True):
         if num_samples == -1:
             num_samples = self.batch_size
-        noise = np.random.uniform(-1,1,size=[num_filters, self.noise_dim])
+        noise = np.random.uniform(-1,1,size=[num_samples, self.noise_dim])
         images = self.generator(noise, reuse)
         return images
