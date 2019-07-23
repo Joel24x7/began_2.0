@@ -1,9 +1,9 @@
-import time
 import math
+import time
 
+import matplotlib as plt
 import numpy as np
 import tensorflow as tf
-import matplotlib as plt
 
 from data_prep import load_data
 from model import Began
@@ -37,6 +37,7 @@ def train(model, epochs=100):
     tf.summary.scalar('convergence', m_global)
     tf.summary.scalar('kt', kt)
     merged = tf.summary.merge_all()
+    saver = tf.train.Saver()
 
 
     with tf.Session() as sess:
@@ -65,17 +66,25 @@ def train(model, epochs=100):
                     convergence = real_loss + np.abs(gamma * real_loss - gen_loss)
 
                     print('Epoch:', '%04d' % epoch, '%05d/%05d' % (batch_step, num_batches_per_epoch), 'convergence: {:.4}'.format(convergence))
-                    test('train')
+                    test(model, model.batch_size, 'train')
                 
             saver.save(sess, './models/began', global_step = epoch)
 
-def test(img_name='test'):
-    num_images = batch_size
-    z_test = np.random.uniform(-1,1,size=[batch_size, noise_dimension])
-    output_gen = (self.sess.run(self.g_z, feed_dict={self.z : z_test}))
+def test(model, num_samples, img_name='test'):
 
-    for i in range(num_images):
-        tmpName = 'results/{}_image{}.png'.format(key, i)
-        img = output_gen[i]
-        plt.imshow(img)
-        plt.savefig(tmpName)
+
+    x, z, lr, kt = model.initInputs()
+    sample = model.get_sample(num_samples)
+    saver = tf.train.Saver()
+
+    with tf.Session() as sess:
+        if img_name == 'train':
+            checkpoint_root = tf.train.latest_checkpoint('models',latest_filename=None)
+            saver.restore(sess, checkpoint_root)
+        generated_samples = sess.run(sample)
+
+        for i in range(num_samples):
+            tmpName = 'results/{}_image{}.png'.format(key, i)
+            img = generated_samples[i]
+            plt.imshow(img)
+            plt.savefig(tmpName)
