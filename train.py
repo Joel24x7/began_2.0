@@ -75,7 +75,7 @@ def train(model, epochs=100):
                     print('Epoch:', '%04d' % epoch, '%05d/%05d' % (batch_step, num_batches_per_epoch), 'convergence: {:.4}'.format(convergence))
                     
                     images = sess.run(sample)
-                    for img in range(images):
+                    for img in range(images.shape[0]):
                         tmpName = 'results/train_image{}.png'.format(img)
                         print(img.shape)
                         plt.imshow(img)

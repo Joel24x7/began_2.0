@@ -15,6 +15,7 @@ def load_data():
         data = file['mnist_data']
         data = np.array(data, dtype=np.float16)
         return data
+    print('\nFinished loading data\n')
 
 def prep_mnist_color(change_colors=True):
 
