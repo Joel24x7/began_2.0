@@ -11,6 +11,8 @@ from model import Began
 
 def train(model, epochs=100):
 
+    print('\nStarting training\n')
+
     #Setup model
     x, z, lr, kt = model.initInputs()
     dis_loss, gen_loss, d_x_loss, d_z_loss = model.loss(x, z, kt)
@@ -29,21 +31,23 @@ def train(model, epochs=100):
     lrate = 0.0001
     lambda_kt = 0.001
     gamma = 0.5
-    kt = 0.0
+    kt_var = 0.0
     epoch_drop = 3
 
     #Tensorboard
     m_global = d_x_loss + tf.abs(gamma * d_x_loss - d_z_loss)
     tf.summary.scalar('convergence', m_global)
-    tf.summary.scalar('kt', kt)
+    tf.summary.scalar('kt', kt_var)
     merged = tf.summary.merge_all()
     saver = tf.train.Saver()
 
+    print('\nTraining Setup Complete\n')
 
     with tf.Session() as sess:
         train_writer = tf.summary.FileWriter('./logs', sess.graph)
         sess.run(tf.global_variables_initializer())
         
+        print('\nBeginning epoch iterations\n')
         for epoch in range(epochs):
 
             learning_rate = lrate * math.pow(0.2, epoch+1 // epoch_drop)
@@ -54,11 +58,11 @@ def train(model, epochs=100):
                 end_data_batch = start_data_batch + batch_size
                 batch_data = data[start_data_batch:end_data_batch, :, :, :]
                 z_batch = np.random.uniform(-1,1,size=[batch_size, model.noise_dim])
-
-                feed_dict={x: batch_data, z: z_batch, lr: learning_rate, kt: kt}
-                _, real_loss = sess.run([dis_opt, d_x_loss], feed_dict)
-                _, gen_loss = sess.run([gen_opt, d_z_loss], feed_dict)
-                kt = kt + lambda_kt * (gamma * real_loss - gen_loss)
+                
+                feed_dict={x: batch_data, z: z_batch, lr: learning_rate, kt: kt_var}
+                _, real_loss = sess.run([dis_opt, d_x_loss], feed_dict=feed_dict)
+                _, gen_loss = sess.run([gen_opt, d_z_loss], feed_dict=feed_dict)
+                kt_var = kt_var + lambda_kt * (gamma * real_loss - gen_loss)
 
                 if batch_step % 300 == 0:
                     summary = sess.run(merged, feed_dict)
@@ -66,25 +70,27 @@ def train(model, epochs=100):
                     convergence = real_loss + np.abs(gamma * real_loss - gen_loss)
 
                     print('Epoch:', '%04d' % epoch, '%05d/%05d' % (batch_step, num_batches_per_epoch), 'convergence: {:.4}'.format(convergence))
-                    test(model, model.batch_size, 'train')
+                    test(model, 3, 'train')
                 
             saver.save(sess, './models/began', global_step = epoch)
 
-def test(model, num_samples, img_name='test'):
+def test(model, num_samples, key='test'):
 
 
     x, z, lr, kt = model.initInputs()
-    sample = model.get_sample(num_samples)
+    sample = model.get_sample(z)
     saver = tf.train.Saver()
 
     with tf.Session() as sess:
-        if img_name == 'train':
+        if key != 'train':
             checkpoint_root = tf.train.latest_checkpoint('models',latest_filename=None)
             saver.restore(sess, checkpoint_root)
-        generated_samples = sess.run(sample)
 
         for i in range(num_samples):
+            noise = np.random.uniform(-1,1,size=[model.batch_size, model.noise_dim])
+            img = sess.run(sample, feed_dict={z: noise})
+
             tmpName = 'results/{}_image{}.png'.format(key, i)
-            img = generated_samples[i]
             plt.imshow(img)
             plt.savefig(tmpName)
+            

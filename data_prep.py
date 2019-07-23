@@ -11,7 +11,7 @@ from tensorflow.examples.tutorials.mnist import input_data
 image_size=64
 
 def load_data():
-    with h5py.File('datasets/mnist_data.h5') as file:
+    with h5py.File('mnist_data.h5') as file:
         data = file['mnist_data']
         data = np.array(data, dtype=np.float16)
         return data
