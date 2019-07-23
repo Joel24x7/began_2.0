@@ -65,15 +65,13 @@ def train(model, epochs=100):
                 _, real_loss = sess.run([dis_opt, d_x_loss], feed_dict=feed_dict)
                 _, gen_loss = sess.run([gen_opt, d_z_loss], feed_dict=feed_dict)
                 kt_var = kt_var + lambda_kt * (gamma * real_loss - gen_loss)
+                convergence = real_loss + np.abs(gamma * real_loss - gen_loss)
 
-                if batch_step % 300 == 0:
-                    summary = sess.run(merged, feed_dict)
-                    tmp_step = epoch * num_batches_per_epoch + batch_step
-                    train_writer.add_summary(summary, tmp_step)
-                    convergence = real_loss + np.abs(gamma * real_loss - gen_loss)
+                summary = sess.run(merged, feed_dict)
+                train_writer.add_summary(summary, epoch * num_batches_per_epoch + batch_step)
+                print('Epoch:', '%04d' % epoch, '%05d/%05d' % (batch_step, num_batches_per_epoch), 'convergence: {:.4}'.format(convergence))
 
-                    print('Epoch:', '%04d' % epoch, '%05d/%05d' % (batch_step, num_batches_per_epoch), 'convergence: {:.4}'.format(convergence))
-                    
+                if batch_step % 2000 == 0:
                     images = sess.run(sample)
                     for i in range(images.shape[0]):
                         tmpName = 'results/train_image{}.png'.format(i)
@@ -81,8 +79,7 @@ def train(model, epochs=100):
                         plt.imshow(img)
                         plt.savefig(tmpName)
 
-                
-            saver.save(sess, './models/began', global_step = epoch)
+                    saver.save(sess, './models/began', global_step = epoch)
 
 def test(model):
 
@@ -90,16 +87,20 @@ def test(model):
 
     #Setup model
     _, z, _, _ = model.initInputs()
-    sample = model.get_sample()
+    sample = model.get_sample(reuse=False)
     saver = tf.train.Saver()
+    checkpoint_root = tf.train.latest_checkpoint('models',latest_filename=None)
 
     with tf.Session() as sess:
-        checkpoint_root = tf.train.latest_checkpoint('models',latest_filename=None)
-        saver.restore(sess, checkpoint_root)
+
+        if checkpoint_root != None:
+            saver.restore(sess, checkpoint_root)
+        else:
+            sess.run(tf.global_variables_initializer())
 
         images = sess.run(sample)
         for i in range(images.shape[0]):
-            tmpName = 'results/train_image{}.png'.format(i)
+            tmpName = 'results/test_image{}.png'.format(i)
             img = images[i, :, :, :]
             plt.imshow(img)
             plt.savefig(tmpName)
