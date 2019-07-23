@@ -1,7 +1,7 @@
 import math
 import time
 
-import matplotlib as plt
+import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
 
