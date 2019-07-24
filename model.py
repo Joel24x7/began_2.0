@@ -4,7 +4,7 @@ from layers import *
 class Began(object):
     def __init__(self):
         self.batch_size = 16
-        self.noise_dim = 64
+        self.noise_dim = 128
         self.image_size = 64
         self.image_depth = 3
 
@@ -24,7 +24,7 @@ class Began(object):
             if reuse:
                 scope.reuse_variables()
 
-            h0 = dense_layer(input_layer=input, units = self.hidden_size, scope='dec_h0')
+            h0 = dense_layer(input_layer=input, units = 8 * 8 * self.num_filters, scope='dec_h0')
             h0 = tf.reshape(h0, [-1, 8, 8, self.num_filters])
 
             conv1 = conv_layer(input_layer=h0, layer_depth=self.num_filters, scope='dec1')
@@ -87,7 +87,7 @@ class Began(object):
             conv8 = conv_layer(input_layer=conv7, layer_depth=self.num_filters*4, scope='enc8')
             tf.nn.elu(conv8)
 
-            dense9 = dense_layer(input_layer=conv8, units=self.hidden_size, scope='encoder_output')
+            dense9 = dense_layer(input_layer=conv8, units=self.noise_dim, scope='encoder_output')
             encoder_output = tf.nn.tanh(dense9)
             return encoder_output
 

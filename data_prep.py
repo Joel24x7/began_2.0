@@ -10,13 +10,14 @@ from tensorflow.examples.tutorials.mnist import input_data
 
 image_size=64
 
-def load_data():
-    with h5py.File('mnist_data.h5') as file:
-        data = file['mnist_data']
+def load_data(data_name):
+
+    with h5py.File('{}.h5'.format(data_name)) as file:
+        data = file[data_name]
         data = np.array(data, dtype=np.float16)
         return data
 
-def prep_mnist_color(change_colors=True):
+def prep_mnist_color(data_name, change_colors=True):
 
     scale_factor=image_size/28.0
     x_train = input_data.read_data_sets("mnist", one_hot=True).train.images
@@ -46,14 +47,13 @@ def prep_mnist_color(change_colors=True):
         image[binary[i]] = 1 - image[binary[i]]
         
         dataset[i] = image
-    return dataset
+
+    with h5py.File('{}.h5'.format(data_name), 'w') as file:
+        file.create_dataset(data_name, data=dataset)
 
 if __name__ == "__main__":
-    data = prep_mnist_color()
-    with h5py.File('mnist_data.h5', 'w') as file:
-        file.create_dataset('mnist_data', data=data)
+    data = prep_mnist_color('mnist_data')
 
-    # plt.figure(figsize=(15,3))
     count = 8
     for i in range(count):
         plt.subplot(2, count // 2, i+1)
