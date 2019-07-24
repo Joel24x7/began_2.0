@@ -13,7 +13,7 @@ from model import Began
 def train(model, epochs=100):
 
     #Setup file structure
-    project_dir, logs_dir, samples_dir, models_dir = setup_dirs(project_num=2.3)
+    project_dir, logs_dir, samples_dir, models_dir = setup_dirs(project_num=2.4)
     data_dir = 'data'
 
     if not os.path.exists(data_dir):

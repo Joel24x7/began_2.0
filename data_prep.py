@@ -14,7 +14,7 @@ def load_data(data_name):
 
     with h5py.File('{}.h5'.format(data_name)) as file:
         data = file[data_name]
-        data = np.array(data, dtype=np.float16)
+        data = np.array(data, dtype=np.float32)
         return data
 
 def prep_mnist_color(data_name, change_colors=True):
@@ -29,8 +29,8 @@ def prep_mnist_color(data_name, change_colors=True):
     resized = np.asarray([scipy.ndimage.zoom(image, (scale_factor, scale_factor, 1), order=1) for image in x_train])
     color = np.concatenate([resized, resized, resized], axis=3)    
     binary = (color > 0.5)
-    
     dataset = np.zeros((x_train.shape[0], image_size, image_size, 3))
+
     for i in range(x_train.shape[0]):
 
         x_c = np.random.randint(0, color_img.size[0] - image_size)
@@ -52,7 +52,8 @@ def prep_mnist_color(data_name, change_colors=True):
         file.create_dataset(data_name, data=dataset)
 
 if __name__ == "__main__":
-    data = prep_mnist_color('mnist_data')
+    prep_mnist_color('mnist_data')
+    data = load_data('mnist_data')
 
     count = 8
     for i in range(count):
