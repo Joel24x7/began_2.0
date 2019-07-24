@@ -76,7 +76,7 @@ def train(model, epochs=100):
                 convergence = real_loss + np.abs(gamma * real_loss - fake_loss)
 
                 curr_step = epoch * num_batches_per_epoch + batch_step
-                print('Time: {:.2} Epoch: {} {}/{} convergence: {:.4} kt: {:.4}'.format(time.time() - start_time, epoch, batch_step, num_batches_per_epoch, convergence, kt_var))
+                print('Time: {:.0} Epoch: {} {}/{} convergence: {:.4} kt: {:.4}'.format(time.time() - start_time, epoch, batch_step, num_batches_per_epoch, convergence, kt_var))
 
                 if curr_step % 2500 == 0:
                     images = sess.run(sample)
