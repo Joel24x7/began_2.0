@@ -13,7 +13,6 @@ class Began(object):
 
     
     def initInputs(self):
-        print('\nInitializing placeholders\n')
         x = tf.placeholder(tf.float32, [None, self.image_size, self.image_size, self.image_depth], name='input_data')
         z = tf.placeholder(tf.float32, [None, self.noise_dim], name='input_noise')
         lr = tf.placeholder(tf.float32, [], name='learning_rate')

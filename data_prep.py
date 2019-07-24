@@ -15,11 +15,8 @@ def load_data():
         data = file['mnist_data']
         data = np.array(data, dtype=np.float16)
         return data
-    print('\nFinished loading data\n')
 
 def prep_mnist_color(change_colors=True):
-
-    print("\nPreparing Mnist digits...\n")
 
     scale_factor=image_size/28.0
     x_train = input_data.read_data_sets("mnist", one_hot=True).train.images
@@ -49,7 +46,6 @@ def prep_mnist_color(change_colors=True):
         image[binary[i]] = 1 - image[binary[i]]
         
         dataset[i] = image
-    print("\nPreprocessing successful\n")
     return dataset
 
 if __name__ == "__main__":
