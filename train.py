@@ -27,7 +27,6 @@ def train(model, epochs=100):
 
     #Setup data
     data = load_data(data_dir)
-    np.random.shuffle(data)
     start_time = time.time()
 
     #Setup inputs
@@ -60,7 +59,9 @@ def train(model, epochs=100):
         
         for epoch in range(epochs):
 
+            np.random.shuffle(data)
             learning_rate = lrate * math.pow(0.2, epoch+1 // epoch_drop)
+            
             for batch_step in range(num_batches_per_epoch):
 
                 #Prep batch
@@ -68,10 +69,11 @@ def train(model, epochs=100):
                 end_data_batch = start_data_batch + batch_size
                 batch_data = data[start_data_batch:end_data_batch, :, :, :]
                 z_batch = np.random.uniform(-1,1,size=[batch_size, model.noise_dim])
-                
+
                 feed_dict={x: batch_data, z: z_batch, lr: learning_rate, kt: kt_var}
                 _, real_loss = sess.run([dis_opt, d_x_loss], feed_dict=feed_dict)
                 _, fake_loss = sess.run([gen_opt, d_z_loss], feed_dict=feed_dict)
+
                 kt_var = np.minimum(1.0, np.maximum(kt_var + lambda_kt * (gamma * real_loss - fake_loss), 0.0))
                 convergence = real_loss + np.abs(gamma * real_loss - fake_loss)
 

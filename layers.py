@@ -40,7 +40,7 @@ def upsample(conv, size):
 
 #Downsample with Strided Convolution
 def subsample(conv):
-    return tf.nn.max_pool(conv, ksize = (1,2,2,1), strides = (1,2,2,1), padding='SAME')
+    return tf.nn.avg_pool(conv, ksize = (1,2,2,1), strides = (1,2,2,1), padding='SAME')
 
 #L1 Pixel-wise Loss for distributions
 def l1_loss(original_images, reconstructed_images):
