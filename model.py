@@ -8,7 +8,7 @@ class Began(object):
         self.image_size = 64
         self.image_depth = 3
 
-        self.num_filters = 64
+        self.num_filters = 128
         self.hidden_size = 8 * 8 * self.num_filters
 
     
