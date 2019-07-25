@@ -13,7 +13,7 @@ from model import Began
 def train(model, epochs=100):
 
     #Setup file structure
-    project_dir, logs_dir, samples_dir, models_dir = setup_dirs(project_num=2.4)
+    project_dir, logs_dir, samples_dir, models_dir = setup_dirs(project_num=2.5)
     data_dir = 'data'
 
     if not os.path.exists(data_dir):
@@ -61,7 +61,7 @@ def train(model, epochs=100):
 
             np.random.shuffle(data)
             learning_rate = lrate * math.pow(0.2, epoch+1 // epoch_drop)
-            
+
             for batch_step in range(num_batches_per_epoch):
 
                 #Prep batch
@@ -97,7 +97,7 @@ def train(model, epochs=100):
 def test(model):
 
     #Setup file structure
-    project_dir, logs_dir, samples_dir, models_dir = setup_dirs(project_num=2.4)
+    project_dir, logs_dir, samples_dir, models_dir = setup_dirs(project_num=2.5)
 
     #Setup model
     _, z, _, _ = model.initInputs()
