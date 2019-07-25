@@ -72,15 +72,15 @@ def train(model, epochs=100):
                 feed_dict={x: batch_data, z: z_batch, lr: learning_rate, kt: kt_var}
                 _, real_loss = sess.run([dis_opt, d_x_loss], feed_dict=feed_dict)
                 _, fake_loss = sess.run([gen_opt, d_z_loss], feed_dict=feed_dict)
-                kt_var = kt_var + lambda_kt * (gamma * real_loss - fake_loss)
+                kt_var = np.minimum(1.0, np.maximum(kt_var + lambda_kt * (gamma * real_loss - fake_loss), 0.0))
                 convergence = real_loss + np.abs(gamma * real_loss - fake_loss)
 
                 curr_step = epoch * num_batches_per_epoch + batch_step
-                print('Time: {:.0} Epoch: {} {}/{} convergence: {:.4} kt: {:.4}'.format(time.time() - start_time, epoch, batch_step, num_batches_per_epoch, convergence, kt_var))
+                print('Time: {:.2} Epoch: {} {}/{} convergence: {:.4} kt: {:.4}'.format(time.time() - start_time, epoch, batch_step, num_batches_per_epoch, convergence, kt_var))
 
                 if curr_step % 2500 == 0:
                     images = sess.run(sample)
-                    images = (images + 1.0) / 2.0
+                    #images = (images + 1.0) / 2.0
                     for i in range(images.shape[0]):
                         tmpName = '{}/train_image{}.png'.format(samples_dir, i)
                         img = images[i, :, :, :]
@@ -95,7 +95,7 @@ def train(model, epochs=100):
 def test(model):
 
     #Setup file structure
-    project_dir, logs_dir, samples_dir, models_dir = setup_dirs(project_num=2.3)
+    project_dir, logs_dir, samples_dir, models_dir = setup_dirs(project_num=2.4)
 
     #Setup model
     _, z, _, _ = model.initInputs()
@@ -111,7 +111,7 @@ def test(model):
             sess.run(tf.global_variables_initializer())
 
         images = sess.run(sample)
-        images = (images + 1.0) / 2.0
+        #images = (images + 1.0) / 2.0
 
         for i in range(images.shape[0]):
             tmpName = '{}/test_image{}.png'.format(samples_dir, i)
