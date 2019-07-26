@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
 
-from data_prep import load_data, prep_mnist_color
+from data_prep_celeb import load_data, prepare_images
 from model import Began
 
 
@@ -14,10 +14,9 @@ def train(model, epochs=100):
 
     #Setup file structure
     project_dir, logs_dir, samples_dir, models_dir = setup_dirs(project_num=2.5)
-    data_dir = 'data'
 
-    if not os.path.exists(data_dir):
-        prep_mnist_color(data_dir)
+    if not os.path.exists('celeb'):
+        prepare_images()
 
     #Setup model
     x, z, lr, kt = model.initInputs()
@@ -26,7 +25,7 @@ def train(model, epochs=100):
     sample = model.get_sample()
 
     #Setup data
-    data = load_data(data_dir)
+    data = load_data()
     start_time = time.time()
 
     #Setup inputs
