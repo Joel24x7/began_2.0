@@ -13,7 +13,7 @@ from model import Began
 def train(model, epochs=100):
 
     #Setup file structure
-    project_dir, logs_dir, samples_dir, models_dir = setup_dirs(project_num=2.5)
+    project_dir, logs_dir, samples_dir, models_dir = setup_dirs(project_num=2.6)
 
     if not os.path.exists('celeb'):
         prepare_images()
@@ -96,7 +96,7 @@ def train(model, epochs=100):
 def test(model):
 
     #Setup file structure
-    project_dir, logs_dir, samples_dir, models_dir = setup_dirs(project_num=2.5)
+    project_dir, logs_dir, samples_dir, models_dir = setup_dirs(project_num=2.6)
 
     #Setup model
     _, z, _, _ = model.initInputs()
