@@ -39,6 +39,10 @@ def upsample(conv, size):
     return tf.image.resize_nearest_neighbor(conv, size)
 
 #Downsample with Strided Convolution
+def strided_conv_subsample(conv, filters, scope):
+    subsampled = conv_layer(input_layer=conv, layer_depth=filters, scope=scope)
+    return tf.nn.relu(subsampled)
+    
 def subsample(conv):
     return tf.nn.avg_pool(conv, ksize = (1,2,2,1), strides = (1,2,2,1), padding='SAME')
 

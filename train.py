@@ -12,6 +12,10 @@ from model import Began
 
 def train(model, epochs=100):
 
+    np.random.RandomState(123)
+    tf.set_random_seed(123)
+
+
     #Setup file structure
     project_dir, logs_dir, samples_dir, models_dir = setup_dirs(project_num=2.6)
 
@@ -33,9 +37,9 @@ def train(model, epochs=100):
     num_batches_per_epoch = len(data) // batch_size
 
     #hyperparameters
-    lrate = 0.0001
+    lrate = 0.00008
     lambda_kt = 0.001
-    gamma = 0.4
+    gamma = 0.5
     kt_var = 0.0
     epoch_drop = 3
 
@@ -77,22 +81,26 @@ def train(model, epochs=100):
                 convergence = real_loss + np.abs(gamma * real_loss - fake_loss)
 
                 curr_step = epoch * num_batches_per_epoch + batch_step
-                print('Time: {:.2} Epoch: {} {}/{} convergence: {:.4} kt: {:.4}'.format(time.time() - start_time, epoch, batch_step, num_batches_per_epoch, convergence, kt_var))
+                print('Time: {} Epoch: {} {}/{} convergence: {:.4} kt: {:.4}'.format(int(time.time() - start_time), epoch, batch_step, num_batches_per_epoch, convergence, kt_var))
 
-                if curr_step % 2500 == 0:
-                    images = sess.run(sample)
-                    #images = (images + 1.0) / 2.0
-                    for i in range(images.shape[0]):
-                        tmpName = '{}/train_image{}.png'.format(samples_dir, i)
-                        img = images[i, :, :, :]
-                        plt.imshow(img)
-                        plt.savefig(tmpName)
-                
-                if curr_step % 300 == 0:
+                if curr_step % 500 == 0:
                     summary = sess.run(merged, feed_dict)
                     train_writer.add_summary(summary, curr_step)
                     saver.save(sess, './{}/began'.format(models_dir), global_step = epoch)
 
+                    images = sess.run(sample)
+                    #images = (images + 1.0) / 2.0
+                    for i in range(images.shape[0]):
+                        tmp_name = '{}/train_image{}.png'.format(samples_dir, i)
+                        img = images[i, :, :, :]
+                        plt.imshow(img)
+                        plt.savefig(tmp_name)
+
+                        x_name = '{}/data_image{}.png'.format(samples_dir, i)
+                        data_img = batch_data[i, :, :, :]
+                        plt.imshow(data_img)
+                        plt.savefig(x_name)
+                
 def test(model):
 
     #Setup file structure
